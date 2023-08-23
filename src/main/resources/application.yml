@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/coupon
+    username: root
+    password: test1357
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update # DB ??? ??
+    properties:
+      hibernate:
+        format_sql: true # ??? ???? JPA ?? ??? ????? ??
+    open-in-view: false
+
+logging:
+  level:
+    org.springframework: debug
+    org.hibernate.SQL: info
+    org.hibernate.type.descriptor.sql.BasicBinder: trace # ??? ?? ? ? ???? ????? ???? ?
