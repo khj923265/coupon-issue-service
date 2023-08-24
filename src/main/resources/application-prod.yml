@@ -13,7 +13,10 @@ spring:
       hibernate:
         format_sql: true # 콘솔에 출력되는 JPA 실행 쿼리를 가독성있게 표현
     open-in-view: false
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
 logging:
   level:
     org.springframework: debug

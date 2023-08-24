@@ -52,4 +52,10 @@ public class CouponController {
         couponCommendService.issueCoupon(couponIssueDto);
         return ApiResponseEntity.ok();
     }
+
+    @PostMapping("/issuebyredisson")
+    private ApiResponseEntity<String> issueCouponByRedisson(@Valid @RequestBody CouponIssueDto couponIssueDto) {
+        couponCommendService.issueCouponByRedisson(couponIssueDto);
+        return ApiResponseEntity.ok();
+    }
 }
