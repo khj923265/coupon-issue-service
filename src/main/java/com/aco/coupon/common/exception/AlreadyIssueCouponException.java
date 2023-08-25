@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 public class AlreadyIssueCouponException extends BaseException{
     private static final HttpStatus STATUS = HttpStatus.BAD_REQUEST;
-    private static final String MESSAGE = "쿠폰이 만료되었습니다.";
+    private static final String MESSAGE = "이미 쿠폰을 발급 받았습니다.";
     private static final ApiResponseEntity<Void> RESPONSE = new ApiResponseEntity<>(false, String.valueOf(STATUS.value()), MESSAGE, () -> null);
     private static final AlreadyIssueCouponException INSTANCE = new AlreadyIssueCouponException();
 

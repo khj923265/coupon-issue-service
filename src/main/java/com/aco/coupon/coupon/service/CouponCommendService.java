@@ -5,8 +5,10 @@ import com.aco.coupon.common.exception.CouponInvalidException;
 import com.aco.coupon.common.exception.CouponIssueFailException;
 import com.aco.coupon.coupon.domain.Coupon;
 import com.aco.coupon.coupon.domain.CouponHistory;
+import com.aco.coupon.coupon.domain.CouponRedis;
 import com.aco.coupon.coupon.dto.CouponIssueDto;
 import com.aco.coupon.coupon.repository.CouponHistoryRepository;
+import com.aco.coupon.coupon.repository.CouponRedisRepository;
 import com.aco.coupon.coupon.repository.CouponRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBucket;
@@ -23,26 +25,35 @@ import java.util.concurrent.TimeUnit;
 public class CouponCommendService {
 
     private final String REDISSON_LOCK_PREFIX = "LOCK:";
-    private final int ZERO = 0;
+    private final int EMPTY = 0;
     private final RedissonClient redissonClient;
     private final CouponRepository couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
 
-    public CouponCommendService(RedissonClient redissonClient, CouponRepository couponRepository, CouponHistoryRepository couponHistoryRepository) {
+    private final CouponRedisRepository couponRedisRepository;
+
+    public CouponCommendService(RedissonClient redissonClient, CouponRepository couponRepository, CouponHistoryRepository couponHistoryRepository, CouponRedisRepository couponRedisRepository) {
         this.redissonClient = redissonClient;
         this.couponRepository = couponRepository;
         this.couponHistoryRepository = couponHistoryRepository;
+        this.couponRedisRepository = couponRedisRepository;
     }
 
     public void save(Coupon coupon) {
         Coupon savedCoupon = couponRepository.save(coupon);
-        redissonClient.getBucket("coupon" + ":" + savedCoupon.getId()).set(savedCoupon.getCount());
+//        redissonClient.getBucket("coupon" + ":" + savedCoupon.getId()).set(savedCoupon.getCount());
+        CouponRedis couponRedis = CouponRedis.builder()
+                .id(savedCoupon.getId())
+                .name(savedCoupon.getName())
+                .stock(savedCoupon.getStock())
+                .build();
+        couponRedisRepository.save(couponRedis);
     }
 
     public void issueCoupon(CouponIssueDto couponIssueDto) {
         Coupon coupon = couponRepository.findWithPessimisticLockById(couponIssueDto.getCouponId())
                 .orElseThrow(CouponIssueFailException::getInstance);
-        if (coupon.isInValid() || coupon.getCount() <= 0) {
+        if (coupon.isInValid() || coupon.getStock() <= 0) {
             throw CouponInvalidException.getInstance();
         }
 
@@ -72,18 +83,12 @@ public class CouponCommendService {
         // 해결해야함
 
         try {
-            if(!rLock.tryLock(1, 3, TimeUnit.SECONDS)) {
+            if (!rLock.tryLock(1, 3, TimeUnit.SECONDS)) {
                 throw CouponIssueFailException.getInstance();
             }
 
-            final int couponCount = getCurrentCouponCount(key);
-            if(couponCount <= ZERO){
-                log.info("[{}] 현재 남은 재고가 없습니다. ({}개)", threadNumber , couponCount);
-                throw CouponInvalidException.getInstance();
-            }
+            getCouponRedis(couponIssueDto, threadNumber);
 
-            log.info("threadNumber : {} & 현재 남은 재고 : {}개", threadNumber, couponCount - 1);
-            couponDecrease(key, couponCount);
         } catch (InterruptedException e) {
             log.info(e.getMessage());
             throw CouponIssueFailException.getInstance();
@@ -104,6 +109,27 @@ public class CouponCommendService {
 
         couponHistoryRepository.save(couponHistory);
         coupon.discount();
+        couponRepository.save(coupon);
+    }
+
+    public void getCouponRedis(CouponIssueDto couponIssueDto, String threadNumber) {
+        CouponRedis couponRedis = couponRedisRepository.findById(couponIssueDto.getCouponId())
+                .orElseThrow(CouponIssueFailException::getInstance);
+
+        if (couponRedis.getStock() <= EMPTY) {
+            log.info("[{}] 현재 남은 재고가 없습니다.", threadNumber);
+            throw CouponInvalidException.getInstance();
+        }
+
+        if (couponRedis.getIssuedUserIdMap().containsKey(couponIssueDto.getMemberId())) {
+            throw AlreadyIssueCouponException.getInstance();
+        }
+
+        couponRedis.addIssuedUser(couponIssueDto.getMemberId(), couponRedis.getStock());
+        couponRedis.decrease();
+        couponRedisRepository.save(couponRedis);
+
+        log.info("[{}] & 현재 남은 재고 : {}개", threadNumber, couponRedis.getStock() - 1);
     }
 
     private int getCurrentCouponCount(String key) {
