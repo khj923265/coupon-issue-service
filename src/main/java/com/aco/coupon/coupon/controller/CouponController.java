@@ -55,7 +55,7 @@ public class CouponController {
 
     @PostMapping("/issuebyredisson")
     private ApiResponseEntity<String> issueCouponByRedisson(@Valid @RequestBody CouponIssueDto couponIssueDto) {
-        couponCommendService.issueCouponByRedisson(couponIssueDto);
+        couponCommendService.issueCouponByRedisson("coupon" + couponIssueDto.getCouponId() ,couponIssueDto);
         return ApiResponseEntity.ok();
     }
 

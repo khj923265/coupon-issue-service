@@ -1,5 +1,7 @@
 package com.aco.coupon.coupon.domain;
 
+import com.aco.coupon.common.exception.AlreadyIssueCouponException;
+import com.aco.coupon.common.exception.CouponInvalidException;
 import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
