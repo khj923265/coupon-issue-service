@@ -19,13 +19,13 @@ services:
       - "8080:8080"
     networks:
       - coupon-network
-#  coupon-service2:
-#    container_name: coupon-service2
-#    image: "khj923265/coupon-service:1.0"
-#    ports:
-#      - "8081:8081"
-#    networks:
-#      - coupon-network
+  coupon-service2:
+    container_name: coupon-service2
+    image: "khj923265/coupon-service:1.0"
+    ports:
+      - "8081:8080"
+    networks:
+      - coupon-network
 
 networks: # 가장 기본적인 bridge 네트워크
   coupon-network:
