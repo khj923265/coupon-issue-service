@@ -17,6 +17,11 @@ services:
     image: "khj923265/coupon-service:1.0"
     networks:
       - coupon-network
+  coupon-service2:
+    container_name: coupon-service2
+    image: "khj923265/coupon-service:1.0"
+    networks:
+      - coupon-network
 
 networks: # 가장 기본적인 bridge 네트워크
   coupon-network:
