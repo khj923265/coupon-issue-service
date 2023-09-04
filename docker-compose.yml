@@ -21,3 +21,4 @@ services:
 networks: # 가장 기본적인 bridge 네트워크
   coupon-network:
     driver: bridge
+    external: true
