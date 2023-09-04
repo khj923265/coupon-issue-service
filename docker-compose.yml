@@ -1,0 +1,23 @@
+version: "3"
+services:
+  nginx:
+    container_name: nginx
+    image: "nginx"
+    ports:
+      - "80:80/tcp"
+    volumes:
+      #docker-compose.yml과 같은 레벨에 둔 nginx.conf를 mount.
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - coupon-network
+    depends_on:
+      - coupon-service
+  coupon-service:
+    container_name: coupon-service
+    image: "khj923265/coupon-service:1.0"
+    networks:
+      - coupon-network
+
+networks: # 가장 기본적인 bridge 네트워크
+  coupon-network:
+    driver: bridge
