@@ -12,13 +12,13 @@ services:
       - coupon-network
     depends_on:
       - coupon-service
-    deploy:
-      replicas: 2
   coupon-service:
     container_name: coupon-service
     image: "khj923265/coupon-service:1.0"
     networks:
       - coupon-network
+    deploy:
+      replicas: 2
 
 networks: # 가장 기본적인 bridge 네트워크
   coupon-network:
