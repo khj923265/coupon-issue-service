@@ -12,6 +12,8 @@ services:
       - coupon-network
     depends_on:
       - coupon-service
+    deploy:
+      replicas: 2
   coupon-service:
     container_name: coupon-service
     image: "khj923265/coupon-service:1.0"
