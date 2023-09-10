@@ -54,6 +54,8 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd /home/ubuntu/coupon-issue-service
+            docker stop ${{ secrets.DOCKER_REPOSITORYNAME }}
+            docker rm ${{ secrets.DOCKER_REPOSITORYNAME }}
             docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORYNAME }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORYNAME }}
             docker-compose up -d
