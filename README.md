@@ -8,4 +8,4 @@ RDB 만을 사용한 성능과 Redis 분산락을 사용한 성능 차이 비교
 
 BackEnd : Springboot, Java17, JPA  
 Infra: AWS EC2, MariaDB, ElastiCache(Redis)  
-ETC: nGrinder, Docker
+ETC: nGrinder, Docker, GitHub Actons
