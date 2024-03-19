@@ -58,14 +58,13 @@ public class CouponCommendService {
         if (hasCoupon) {
             throw AlreadyIssueCouponException.getInstance();
         }
-
-        coupon.discount();
         CouponHistory couponHistory = CouponHistory.builder()
                 .couponId(couponIssueDto.getCouponId())
                 .memberId(couponIssueDto.getMemberId())
                 .build();
 
         couponHistoryRepository.save(couponHistory);
+        coupon.discount();
     }
 
     @DistributedLock(key = "#lockName")
