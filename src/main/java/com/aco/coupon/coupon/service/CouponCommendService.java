@@ -60,12 +60,12 @@ public class CouponCommendService {
         }
 
         coupon.discount();
-//        CouponHistory couponHistory = CouponHistory.builder()
-//                .couponId(couponIssueDto.getCouponId())
-//                .memberId(couponIssueDto.getMemberId())
-//                .build();
-//
-//        couponHistoryRepository.save(couponHistory);
+        CouponHistory couponHistory = CouponHistory.builder()
+                .couponId(couponIssueDto.getCouponId())
+                .memberId(couponIssueDto.getMemberId())
+                .build();
+
+        couponHistoryRepository.save(couponHistory);
     }
 
     @DistributedLock(key = "#lockName")
@@ -86,12 +86,12 @@ public class CouponCommendService {
         couponRedisRepository.save(couponRedis);
 
         //TODO 메세지 큐 방식으로 히스토리를 저장시키면 좋을듯?
-//        CouponHistory couponHistory = CouponHistory.builder()
-//                .couponId(couponIssueDto.getCouponId())
-//                .memberId(couponIssueDto.getMemberId())
-//                .build();
-//
-//        couponHistoryRepository.save(couponHistory);
+        CouponHistory couponHistory = CouponHistory.builder()
+                .couponId(couponIssueDto.getCouponId())
+                .memberId(couponIssueDto.getMemberId())
+                .build();
+
+        couponHistoryRepository.save(couponHistory);
 
         log.info("현재 남은 재고 : {}개", couponRedis.getStock());
     }
