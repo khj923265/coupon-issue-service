@@ -21,6 +21,10 @@ public class CouponQueryService {
         this.couponHistoryRepository = couponHistoryRepository;
     }
 
+    public Coupon getCoupon(Long id) {
+        return couponRepository.findById(id).get();
+    }
+
     public List<Coupon> getCouponList() {
         return couponRepository.findAll();
     }
