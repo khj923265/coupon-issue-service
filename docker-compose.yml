@@ -12,11 +12,19 @@ services:
       - coupon-network
     depends_on:
       - coupon-service
+      - coupon-service2
   coupon-service:
     container_name: coupon-service
     image: "khj923265/coupon-service:1.0"
     ports:
       - "8080:8080"
+    networks:
+      - coupon-network
+  coupon-service2:
+    container_name: coupon-service2
+    image: "khj923265/coupon-service:1.0"
+    ports:
+      - "8081:8081"
     networks:
       - coupon-network
 
